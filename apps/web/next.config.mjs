@@ -6,6 +6,11 @@ import withPlugins from "next-compose-plugins"
  * @type {import('next').NextConfig}
  */
 const config = withPlugins([[withVercelToolbar(), withBundleAnalyzer({ enabled: process.env.ANALYZE === "true" })]], {
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['*.github.dev', 'localhost:3000'],
+    },
+  },
   reactStrictMode: true,
   logging: {
     fetches: {
