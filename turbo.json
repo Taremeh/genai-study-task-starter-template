@@ -22,6 +22,12 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "build:api": {
+      "inputs": ["apps/api/**/*"],
+      "outputs": ["apps/api/dist/**"],
+      "cache": true,
+      "persistent": false
     }
   }
 }
