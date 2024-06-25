@@ -1,0 +1,15 @@
+services:
+  melisearch:
+    image: getmeili/meilisearch:v1.8   # Use the official Meilisearch Docker image
+    container_name: meilisearch-local  # Optional: Give a custom name to the container
+    ports:
+      - "7700:7700"   # Map the Meilisearch HTTP port to your local machine
+    volumes:
+      - meilisearch_data:/meilisearch_data # Persist Meilisearch data across restarts
+    environment:
+      # These are optional environment variables to customize Meilisearch:
+      - MEILI_MASTER_KEY=${MEILISEARCH_MASTER_KEY}  # Set a master key for security (recommended)
+      - MEILI_ENV=${MEILI_ENV}                      # Set the environment (development, production, etc.)
+
+volumes:
+  meilisearch_data:  # Named volume for data persistence
