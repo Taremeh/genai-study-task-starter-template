@@ -6,9 +6,11 @@ const DEMO_PRODUCTS_API_URL = "http://localhost:3001/products";
 const DEMO_CATEGORIES_API_URL = "http://localhost:3001/categories";
 
 export async function getDemoProducts() {
-  if (!isDemoMode()) {
+  // Temporary workaround to allow Meilisearch to work with demo mode
+  // A long-term solution would be to enable Meilisearch when in demo mode
+  /*if (!isDemoMode()) {
     return { hits: [], totalPages: 0, facetDistribution: {}, totalHits: 0 };
-  }
+  }*/
 
   try {
     const response = await fetch(DEMO_PRODUCTS_API_URL);
