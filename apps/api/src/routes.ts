@@ -18,7 +18,6 @@ routes.get('/setup', async (req, res) => {
   });
 });
 
-
 routes.get('/users', async (req, res) => {
   // const db = await dbPromise;
   // const posts = await db.all('SELECT * FROM posts');
@@ -36,6 +35,7 @@ routes.get('/posts', async (req, res) => {
 
 routes.post('/posts', async (req, res) => {
   const db = await dbPromise;
+  console.log(req.body)
   const { title } = req.body;
   await db.run('INSERT INTO posts (title) VALUES (?)', title);
   res.send({ message: 'Post added successfully' });

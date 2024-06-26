@@ -33,6 +33,7 @@ export function LoginModal() {
   })
 
   async function onSubmit(payload: z.infer<typeof formSchema>) {
+    console.log(payload)
     const { email, password } = payload
     const user = await loginUser({ email, password })
 
