@@ -4,74 +4,37 @@ import { Database } from 'sqlite';
 import { readFileSync } from 'fs';
 import path from 'path';
 import openDb from './db';
+import { Product } from '../types/product.types';
 
-interface Image {
-  url: string;
-  altText: string | null;
-  width: number;
-  height: number;
-}
-
-interface Option {
-  name: string;
-  value: string;
-}
-
-interface Price {
-  amount: string;
-  currencyCode: string;
-}
-
-interface Variant {
-  id: string;
-  title: string;
-  quantityAvailable: number;
-  availableForSale: boolean;
-  price: Price;
-  selectedOptions: Option[];
-}
-
-interface PriceRange {
-  maxVariantPrice: Price;
-  minVariantPrice: Price;
-}
-
-interface Collection {
-  handle: string;
-  title: string;
-  descriptionHtml: string;
-  updatedAt: string;
-  id: string;
-  image: string | null;
-}
-
-interface Product {
-  id: string;
-  handle: string;
-  title: string;
-  descriptionHtml?: string;
-  priceRange: PriceRange;
-  minPrice: number;
-  featuredImage: Image;
-  images: Image[];
-  variants: Variant[];
-  collections: Collection[];
-}
-
-async function initializeDb() {
+async function initializeDb(force: boolean = false) {
   try {
-    // const db: Database = await open({
-    //   filename: 'apps/api/src/db/products.db',
-    //   driver: sqlite3.Database
-    // });
-
     const db = await openDb();
+
+    const tableCheckQueries = [
+      `SELECT name FROM sqlite_master WHERE type='table' AND name='products'`,
+      `SELECT name FROM sqlite_master WHERE type='table' AND name='images'`,
+      `SELECT name FROM sqlite_master WHERE type='table' AND name='variants'`,
+      `SELECT name FROM sqlite_master WHERE type='table' AND name='options'`,
+      `SELECT name FROM sqlite_master WHERE type='table' AND name='collections'`,
+      `SELECT name FROM sqlite_master WHERE type='table' AND name='categories'`
+    ];
+
+    const tableChecks = await Promise.all(tableCheckQueries.map(query => db.get(query)));
+
+    const tablesExist = tableChecks.every(check => check !== undefined);
+
+    if (tablesExist && !force) {
+      console.log('Database already initialized or init in progress.');
+      await db.close();
+      return;
+    }
 
     await db.exec(`DROP TABLE IF EXISTS products`);
     await db.exec(`DROP TABLE IF EXISTS images`);
     await db.exec(`DROP TABLE IF EXISTS variants`);
     await db.exec(`DROP TABLE IF EXISTS options`);
     await db.exec(`DROP TABLE IF EXISTS collections`);
+    await db.exec(`DROP TABLE IF EXISTS categories`);
 
     await db.exec(`CREATE TABLE IF NOT EXISTS products (
       id TEXT PRIMARY KEY,
@@ -141,10 +104,10 @@ async function initializeDb() {
       description TEXT
     )`);
     
-    const filePath = path.join(__dirname, 'demo-data.json');
+    const filePath = path.join(__dirname, '../demo/demo-data.json');
     const products: Product[] = JSON.parse(readFileSync(filePath, 'utf-8'));
 
-    const categoriesFilePath = path.join(__dirname, 'demo-categories-data.json');
+    const categoriesFilePath = path.join(__dirname, '../demo/demo-categories-data.json');
     const categories = JSON.parse(readFileSync(categoriesFilePath, 'utf-8'));
 
     const insertProduct = await db.prepare(`INSERT OR IGNORE INTO products (id, handle, title, descriptionHtml, minPriceAmount, minPriceCurrencyCode, maxPriceAmount, maxPriceCurrencyCode, minPrice, featuredImageUrl, featuredImageAltText, featuredImageWidth, featuredImageHeight) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
@@ -156,39 +119,36 @@ async function initializeDb() {
     const insertCategory = await db.prepare(`INSERT OR IGNORE INTO categories (id, handle, title, descriptionHtml, seoDescription, seoTitle, image, updatedAt, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`);
     
     for (const product of products) {
-      const existingProduct = await db.get(`SELECT id FROM products WHERE id = ?`, product.id);
-      if (!existingProduct) {
-        await insertProduct.run(
-          product.id,
-          product.handle,
-          product.title,
-          product.descriptionHtml || '',
-          product.priceRange.minVariantPrice.amount,
-          product.priceRange.minVariantPrice.currencyCode,
-          product.priceRange.maxVariantPrice.amount,
-          product.priceRange.maxVariantPrice.currencyCode,
-          product.minPrice,
-          product.featuredImage.url,
-          product.featuredImage.altText,
-          product.featuredImage.width,
-          product.featuredImage.height
-        );
+      await insertProduct.run(
+        product.id,
+        product.handle,
+        product.title,
+        product.descriptionHtml || '',
+        product.priceRange.minVariantPrice.amount,
+        product.priceRange.minVariantPrice.currencyCode,
+        product.priceRange.maxVariantPrice.amount,
+        product.priceRange.maxVariantPrice.currencyCode,
+        product.minPrice,
+        product.featuredImage.url,
+        product.featuredImage.altText,
+        product.featuredImage.width,
+        product.featuredImage.height
+      );
 
-        for (const image of product.images) {
-          await insertImage.run(product.id, image.url, image.altText, image.width, image.height);
+      for (const image of product.images) {
+        await insertImage.run(product.id, image.url, image.altText, image.width, image.height);
+      }
+
+      for (const variant of product.variants) {
+        await insertVariant.run(variant.id, product.id, variant.title, variant.quantityAvailable, variant.availableForSale, variant.price.amount, variant.price.currencyCode);
+
+        for (const option of variant.selectedOptions) {
+          await insertOption.run(variant.id, option.name, option.value);
         }
+      }
 
-        for (const variant of product.variants) {
-          await insertVariant.run(variant.id, product.id, variant.title, variant.quantityAvailable, variant.availableForSale, variant.price.amount, variant.price.currencyCode);
-
-          for (const option of variant.selectedOptions) {
-            await insertOption.run(variant.id, option.name, option.value);
-          }
-        }
-
-        for (const collection of product.collections) {
-          await insertCollection.run(collection.id, collection.handle, collection.title, collection.descriptionHtml, collection.updatedAt, collection.image, product.id);
-        }
+      for (const collection of product.collections) {
+        await insertCollection.run(collection.id, collection.handle, collection.title, collection.descriptionHtml, collection.updatedAt, collection.image, product.id);
       }
     }
 
@@ -221,3 +181,5 @@ async function initializeDb() {
 }
 
 initializeDb().catch(err => console.error(err));
+
+export default initializeDb;

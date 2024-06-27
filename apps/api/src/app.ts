@@ -1,25 +1,9 @@
-
 import express from 'express';
-
 import routes from './routes';
 
-class App {
-  public server;
+const app = express();
 
-  constructor() {
-    this.server = express();
+app.use(express.json());
+app.use('/', routes);
 
-    this.middlewares();
-    this.routes();
-  }
-
-  middlewares() {
-    this.server.use(express.json());
-  }
-
-  routes() {
-    this.server.use(routes);
-  }
-}
-
-export default new App().server;
+export default app;
