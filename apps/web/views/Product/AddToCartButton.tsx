@@ -36,6 +36,7 @@ export function AddToCartButton({ className, combination }: { className?: string
   useEffect(() => {
     const checkStock = async () => {
       const cartId = getCookie(COOKIE_CART_ID)
+      console.log("cartId", cartId)
       const itemAvailability = await getItemAvailability(cartId, combination?.id)
 
       itemAvailability && setHasAnyAvailable(itemAvailability.inCartQuantity < itemAvailability.inStockQuantity)

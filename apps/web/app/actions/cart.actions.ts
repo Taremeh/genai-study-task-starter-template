@@ -2,20 +2,20 @@
 
 import { revalidateTag, unstable_cache } from "next/cache"
 import { cookies } from "next/headers"
-import { storefrontClient } from "clients/storefrontClient"
+import { storefrontClient, getCart } from "clients/storefrontClient"
 import { COOKIE_CART_ID, TAGS } from "constants/index"
 import { isDemoMode } from "utils/demoUtils"
 
-export const getCart = unstable_cache(async (cartId: string) => storefrontClient.getCart(cartId), [TAGS.CART], { revalidate: 60 * 15, tags: [TAGS.CART] })
+// export const getCart = unstable_cache(async (cartId: string) => storefrontClient.getCart(cartId), [TAGS.CART], { revalidate: 60 * 15, tags: [TAGS.CART] })
 
 export async function addCartItem(prevState: any, variantId: string) {
-  if (isDemoMode()) return { ok: false, message: "Demo mode active. Filtering, searching, and adding to cart disabled." }
+  //if (isDemoMode()) return { ok: false, message: "Demo mode active. Filtering, searching, and adding to cart disabled." }
   if (!variantId) return { ok: false }
 
   let cartId = cookies().get(COOKIE_CART_ID)?.value
   let cart
 
-  if (cartId) cart = await storefrontClient.getCart(cartId)
+  if (cartId) cart = getCart(cartId)
 
   if (!cartId || !cart) {
     cart = await storefrontClient.createCart([])
