@@ -38,6 +38,7 @@ yarn-error.log*
 /playwright/.cache/
 **/**/.env.*
 **/**/.env
+!.env.*example
 
 /.npm-only-allow
 
