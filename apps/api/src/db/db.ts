@@ -1,9 +1,13 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
+import { Database } from 'sqlite';
+import path from 'path';
 
-const dbPromise = open({
-  filename: './database.sqlite',
-  driver: sqlite3.Database
-});
+export default async function openDb(): Promise<Database> {
+  const filePath = path.join(__dirname, 'products.db');
 
-export default dbPromise;
+  return open({
+    filename: filePath,
+    driver: sqlite3.Database
+  });
+}

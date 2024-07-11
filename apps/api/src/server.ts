@@ -1,11 +1,15 @@
-import express from 'express';
-import routes from './routes';
+import app from './app';
+import initializeDb from './db/init';
+import { delay } from './utils/delay.utils';
 
-const app = express();
-const port = 3333;
+const PORT = process.env.PORT || 3001;
 
-app.use(routes);
+app.listen(PORT, async () => {
+  console.log(`Server is running on port ${PORT}`);
 
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
+  console.log(`Waiting to initialize database...`);
+  await delay(2000).then(() => {
+    console.log(`Initializing database...`);
+    initializeDb().catch(err => console.error(err));
+  });
 });
