@@ -2,31 +2,11 @@ import { PlatformAccessToken, PlatformUserCreateInput, PlatformUser } from '@ent
 import axios from 'axios';
 
 const registerUser = async (input: PlatformUserCreateInput): Promise<Pick<PlatformUser, "id"> | undefined | null> => {
-  try {
-    const { data } = await axios.post('http://localhost:3001/register', input);
-    // Handle successful registration
-
-    return data.user;
-  } catch (error) {
-    console.error(error);
-    // Handle registration error
-    return null;
-  }
+  // ToDo: Implement the registerUser function
+  return null
 };
 
-const loginUser = async (input: Pick<PlatformUserCreateInput, "password" | "email">): Promise<PlatformAccessToken | undefined | null> => {
-  try {
-    const { data } = await axios.post('http://localhost:3001/login', input);
-
-    return {
-      accessToken: data.token,
-      expiresAt: data.expiresAt
-    }
-  } catch (error) {
-    console.error(error);
-    // Handle login error
-  }
-};
+// const loginUser = ...
 
 const getUser = async (accessToken: string): Promise<PlatformUser | undefined | null> => {
   try {
@@ -45,7 +25,7 @@ const getUser = async (accessToken: string): Promise<PlatformUser | undefined | 
 };
 
 export default {
-  loginUser,
   registerUser,
+  // loginUser,
   getUser
 };
