@@ -10,7 +10,7 @@ export const revalidate = 604800
 export const runtime = "edge"
 
 const BASE_URL = env.LIVE_URL
-const HITS_PER_PAGE = 24
+const HITS_PER_PAGE = 3
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
