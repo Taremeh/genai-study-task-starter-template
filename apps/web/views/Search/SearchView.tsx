@@ -83,7 +83,7 @@ const searchProducts = unstable_cache(
 
     const results = await index?.search(query, {
       sort: sortBy ? [sortBy] : undefined,
-      hitsPerPage: 24,
+      hitsPerPage: 3,
       facets: ["collections.title", "tags", "vendor", "variants.availableForSale", "flatOptions.Size", "flatOptions.Color", "minPrice"],
       filter,
       page,
