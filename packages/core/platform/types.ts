@@ -139,6 +139,7 @@ export interface PlatformUser {
   id: string
   phone?: string | null | undefined
   tags: string[]
+  password?: string | null | undefined
 }
 
 export interface PlatformUserCreateInput extends Pick<PlatformUser, "email" | "firstName" | "lastName" | "phone"> {

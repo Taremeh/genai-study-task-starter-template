@@ -1,6 +1,5 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
-import { Database } from 'sqlite';
 import { readFileSync } from 'fs';
 import path from 'path';
 import openDb from './db';
@@ -16,7 +15,8 @@ async function initializeDb(force: boolean = false) {
       `SELECT name FROM sqlite_master WHERE type='table' AND name='variants'`,
       `SELECT name FROM sqlite_master WHERE type='table' AND name='options'`,
       `SELECT name FROM sqlite_master WHERE type='table' AND name='collections'`,
-      `SELECT name FROM sqlite_master WHERE type='table' AND name='categories'`
+      `SELECT name FROM sqlite_master WHERE type='table' AND name='categories'`,
+      `SELECT name FROM sqlite_master WHERE type='table' AND name='users'` // Added users table check
     ];
 
     const tableChecks = await Promise.all(tableCheckQueries.map(query => db.get(query)));
@@ -35,6 +35,7 @@ async function initializeDb(force: boolean = false) {
     await db.exec(`DROP TABLE IF EXISTS options`);
     await db.exec(`DROP TABLE IF EXISTS collections`);
     await db.exec(`DROP TABLE IF EXISTS categories`);
+    await db.exec(`DROP TABLE IF EXISTS users`); // Drop users table if exists
 
     await db.exec(`CREATE TABLE IF NOT EXISTS products (
       id TEXT PRIMARY KEY,
@@ -104,6 +105,20 @@ async function initializeDb(force: boolean = false) {
       description TEXT
     )`);
     
+    await db.exec(`CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      acceptsMarketing BOOLEAN,
+      createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      displayName TEXT,
+      email TEXT NOT NULL UNIQUE,
+      firstName TEXT,
+      lastName TEXT,
+      phone TEXT,
+      tags TEXT,
+      password TEXT NOT NULL
+    )`);
+
     const filePath = path.join(__dirname, '../demo/demo-data.json');
     const products: Product[] = JSON.parse(readFileSync(filePath, 'utf-8'));
 
@@ -117,7 +132,7 @@ async function initializeDb(force: boolean = false) {
 
     const insertCollection = await db.prepare(`INSERT OR IGNORE INTO collections (id, handle, title, descriptionHtml, updatedAt, image, productId) VALUES (?, ?, ?, ?, ?, ?, ?)`);
     const insertCategory = await db.prepare(`INSERT OR IGNORE INTO categories (id, handle, title, descriptionHtml, seoDescription, seoTitle, image, updatedAt, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`);
-    
+
     for (const product of products) {
       await insertProduct.run(
         product.id,
