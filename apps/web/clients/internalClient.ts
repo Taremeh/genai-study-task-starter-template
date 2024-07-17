@@ -10,13 +10,17 @@ const registerUser = async (input: PlatformUserCreateInput): Promise<Pick<Platfo
 
 const getUser = async (accessToken: string): Promise<PlatformUser | undefined | null> => {
   try {
-    const { data } = await axios.get('http://localhost:3001/me', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    if(accessToken != "") {
+      const { data } = await axios.get('http://localhost:3001/me', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
 
-    return data.user;
+      return data.user;
+    } else {
+      return null
+    }
   } catch (error) {
     console.error(error);
     // Handle error
