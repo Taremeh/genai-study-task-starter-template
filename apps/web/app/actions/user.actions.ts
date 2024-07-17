@@ -21,8 +21,8 @@ export async function loginUser({ email, password }: { email: string; password: 
 
 export async function getCurrentUser() {
   const accessToken = cookies().get(COOKIE_ACCESS_TOKEN)?.value
-  const user = await storefrontClient.getUser(accessToken || "")
-  //const user = await internalClient.getUser(accessToken || "")
+  //const user = await storefrontClient.getUser(accessToken || "")
+  const user = await internalClient.getUser(accessToken || "")
   return user
 }
 
