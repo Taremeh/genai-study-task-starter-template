@@ -14,7 +14,10 @@ export async function EverythingUnderSection() {
 
 const getPriceRangedProducts = unstable_cache(
   async () => {
-    if (isDemoMode()) return getDemoProducts().hits.slice(0, 8)
+    if (isDemoMode()) {
+      const demoProducts = await getDemoProducts()
+      return demoProducts.hits.slice(0, 8)
+    }
 
     const index = await meilisearch?.getIndex<PlatformProduct>(MEILISEARCH_INDEX)
     const results = await index.search("", {

@@ -57,8 +57,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const collections = await storefrontClient.getCollections()
     allCollections = collections || []
   } else {
-    allHits = getDemoProducts().hits
-    allCollections = getDemoCategories()
+    const demoProducts = await getDemoProducts();
+    allHits = demoProducts.hits
+    allCollections = await getDemoCategories()
   }
 
   const paginationRoutes = Array.from({ length: allHits.length / HITS_PER_PAGE }, (_, i) => {

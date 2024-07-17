@@ -77,7 +77,10 @@ export async function SearchView({ searchParams, disabledFacets, intro, collecti
 
 const searchProducts = unstable_cache(
   async (query: string, sortBy: string, page: number, filter: string) => {
-    if (isDemoMode()) return getDemoProducts()
+    if (isDemoMode()) {
+      const demoProducts = await getDemoProducts()
+      return demoProducts
+    }
 
     const index = await meilisearch?.getIndex<PlatformProduct>(MEILISEARCH_INDEX)
 

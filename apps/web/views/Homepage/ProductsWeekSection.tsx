@@ -44,7 +44,10 @@ export async function ProductsWeekSection() {
 
 const getNewestProducts = unstable_cache(
   async () => {
-    if (isDemoMode()) return getDemoProducts().hits.slice(0, 8)
+    if (isDemoMode()) {
+      const demoProducts = await getDemoProducts()
+      return demoProducts.hits.slice(0, 8)
+    }
 
     const index = await meilisearch?.getIndex<PlatformProduct>(MEILISEARCH_INDEX)
     const results = await index.search("", { matchingStrategy: "last", limit: 8, sort: ["updatedAtTimestamp:desc"] })

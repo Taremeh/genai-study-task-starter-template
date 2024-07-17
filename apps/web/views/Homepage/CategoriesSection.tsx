@@ -30,7 +30,10 @@ export async function CategoriesSection() {
 
 const getCategories = unstable_cache(
   async () => {
-    if (isDemoMode()) return getDemoCategories().slice(0, 6)
+    if (isDemoMode()) {
+      const demoCategories = await getDemoCategories()
+      return demoCategories.slice(0, 6)
+    }
 
     const results = await storefrontClient.getCollections(6)
     return results || []
