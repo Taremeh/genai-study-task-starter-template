@@ -8,8 +8,8 @@ services:
       - meilisearch_data:/meilisearch_data # Persist Meilisearch data across restarts
     environment:
       # These are optional environment variables to customize Meilisearch:
-      - MEILI_MASTER_KEY=${MEILISEARCH_MASTER_KEY}  # Set a master key for security (recommended)
-      - MEILI_ENV=${MEILI_ENV}                      # Set the environment (development, production, etc.)
+      - MEILI_MASTER_KEY=MASTER_KEY  # Set a master key for security (recommended)
+      - MEILI_ENV=development                      # Set the environment (development, production, etc.)
 
 volumes:
   meilisearch_data:  # Named volume for data persistence

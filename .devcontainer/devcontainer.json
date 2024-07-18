@@ -1,4 +1,4 @@
 {
     "image":"mcr.microsoft.com/devcontainers/universal:2",
-    "postCreateCommand": "yarn install"
+    "postCreateCommand": "cp apps/web/.env.local.example apps/web/.env.local && yarn install"
 }
