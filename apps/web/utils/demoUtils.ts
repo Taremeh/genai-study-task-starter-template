@@ -16,9 +16,9 @@ export async function getDemoProducts() {
 
     return {
       hits: data.results as PlatformProduct[],
-      "offset": 0,
-      "limit": 2,
-      "total": data.results.length,
+      totalPages: 1,
+      facetDistribution: {},
+      totalHits: data.results.length as number,
     };
   } catch (error) {
     console.error("Error fetching demo products:", error);

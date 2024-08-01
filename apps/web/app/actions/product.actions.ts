@@ -28,7 +28,7 @@ export const searchProducts = unstable_cache(
 
 export const getProduct = unstable_cache(
   async (handle: string) => {
-    if (isDemoMode()) return getDemoSingleProduct(handle)
+    if (isDemoMode()) return await getDemoSingleProduct(handle)
 
     const index = await meilisearch?.getIndex<PlatformProduct>(MEILISEARCH_INDEX)
     const documents = await index?.getDocuments({ filter: new FilterBuilder().where("handle", ComparisonOperators.Equal, handle).build(), limit: 1 })

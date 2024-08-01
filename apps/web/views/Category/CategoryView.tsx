@@ -11,7 +11,7 @@ interface CategoryViewProps {
 }
 
 export async function CategoryView({ params, searchParams = {} }: CategoryViewProps) {
-  const collection = isDemoMode() ? getDemoSingleCategory(params.slug) : await storefrontClient.getCollection(params.slug)
+  const collection = isDemoMode() ? await getDemoSingleCategory(params.slug) : await storefrontClient.getCollection(params.slug)
 
   if (!collection) return notFound()
 
