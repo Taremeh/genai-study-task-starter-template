@@ -1,10 +1,10 @@
 import { PlatformProduct } from "@enterprise-commerce/core/platform/types"
-import { env } from "env.mjs"
+import { env } from "../env.mjs"
 
 export function getDemoProducts() {
   if (!isDemoMode()) return { hits: [], totalPages: 0, facetDistribution: {}, totalHits: 0 }
 
-  const allProducts = require("public/demo-data.json") as { results: PlatformProduct[]; offset: number; limit: number; total: number }
+  const allProducts = require("../public/demo-data.json") as { results: PlatformProduct[]; offset: number; limit: number; total: number }
 
   return {
     hits: allProducts.results,
@@ -19,7 +19,7 @@ export function getDemoSingleProduct(handle: string) {
 }
 
 export function getDemoCategories() {
-  return require("public/demo-categories-data.json")
+  return require("../public/demo-categories-data.json")
 }
 
 export function getDemoSingleCategory(handle: string) {
