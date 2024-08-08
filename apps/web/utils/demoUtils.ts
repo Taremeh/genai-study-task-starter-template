@@ -1,6 +1,6 @@
 import fetch from 'node-fetch';
 import { PlatformProduct } from "@enterprise-commerce/core/platform/types";
-import { env } from "env.mjs";
+import { env } from "../env.mjs";
 
 const DEMO_PRODUCTS_API_URL = "http://localhost:3001/products";
 const DEMO_CATEGORIES_API_URL = "http://localhost:3001/categories";
