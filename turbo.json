@@ -5,6 +5,11 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
+    "start": {
+      "dependsOn": ["build"],
+      "inputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "cache": false
+    },
     "deploy": {
       "dependsOn": ["build", "test", "lint"]
     },
