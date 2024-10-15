@@ -34,18 +34,22 @@ export function SignupModal() {
 
   async function onSubmit(payload: z.infer<typeof formSchema>) {
     const { email, password } = payload
-    const user = await signupUser({ email, password })
+    
+    try { 
+      const user = await signupUser({ email, password })
 
-    if (user) {
-      const currentUser = await getCurrentUser()
-      currentUser && setUser(currentUser)
+      if (user) {
+        const currentUser = await getCurrentUser()
+        currentUser && setUser(currentUser)
 
-      closeModal("signup")
-      toast.success("You have successfully signed up! You can now log in.")
-      return
+        closeModal("signup")
+        toast.success("You have successfully signed up! You can now log in.")
+        return
+      }
+      toast.error("Couldn't create user. The email address may be already in use.")
+    } catch (error) {
+      toast.error(`An error occured during SignUp: ${error}`)
     }
-
-    toast.error("Couldn't create user. The email address may be already in use.")
   }
 
   return (

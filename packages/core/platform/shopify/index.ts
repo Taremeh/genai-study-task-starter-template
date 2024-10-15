@@ -215,7 +215,7 @@ async function getCollection(client: StorefrontApiClient, handle: string): Promi
 
 async function createUser(client: StorefrontApiClient, input: PlatformUserCreateInput): Promise<Pick<PlatformUser, "id"> | undefined | null> {
   const user = await client.request<CreateCustomerMutation>(createCustomerMutation, { variables: { input } })
-
+  throw new Error('Using depcrecated StorefrontApiClient. Please implement internalClient.ts');
   return user.data?.customerCreate?.customer
 }
 
